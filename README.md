@@ -1,5 +1,8 @@
 # git-treesame-commit
-Utility to make new commits that are "treesame" with others
+
+Utility to make new commits that are
+[treesame](https://git-scm.com/docs/git-log#_history_simplification)
+with others.
 
 ```
 usage: git-treesame-commit [-h] [-a] [-p] [-m MESSAGE] commit
