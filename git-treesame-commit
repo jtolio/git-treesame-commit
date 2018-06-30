@@ -33,20 +33,27 @@ def main():
   parser.add_argument("commit", help="the commit to match")
   parser.add_argument("-a", "--keep-author", action="store_true",
                       help="if set, keep the commit's original author")
+  parser.add_argument("-p", "--both-parents", action="store_true",
+                      help="if set, commit will have both parents listed")
   parser.add_argument("-m", "--message", help="the new commit message")
   args = parser.parse_args()
 
   newparent = run(["git", "log", "--format=%H", "-1", "HEAD"]).strip()
-  commit = parse_commit(run(["git", "cat-file", "commit", args.commit]))
+  commithash = run(["git", "log", "--format=%H", "-1", args.commit]).strip()
+  commit = parse_commit(run(["git", "cat-file", "commit", commithash]))
+
+  parents = ["parent %s" % newparent]
+  if args.both_parents:
+    parents.append("parent %s" % commithash)
 
   newcommit = textwrap.dedent("""\
   tree {tree}
-  parent {newparent}
+  {parents}
   author {author}
   committer {committer}
 
   Treesame commit: {tree}
-  """.format(newparent=newparent, **commit))
+  """).format(parents="\n".join(parents), **commit)
 
   newhash = run(["git", "hash-object", "-t", "commit", "--stdin", "-w"],
                 newcommit).strip()
