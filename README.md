@@ -9,7 +9,12 @@ the state of the file tree. Two commits that have the exact same file
 tree and thus the exact same treehash are called _treesame_.
 
 This tool allows you to create a new commit on your current branch that
-is treesame with any arbitrary commit anywhere else.
+is treesame with any arbitrary commit anywhere else. It's basically like
+being able to cherry-pick the entire state of a file tree.
+
+This tool has transformed how quickly I am able to figure out and
+debug git situations and I can't understand how this isn't built in to
+git already.
 
 ```
 usage: git-treesame-commit [-h] [-a] [-p] [-m MESSAGE] commit
