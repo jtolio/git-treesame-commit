@@ -4,6 +4,13 @@ Utility to make new commits that are
 [treesame](https://git-scm.com/docs/git-log#_history_simplification)
 with others.
 
+Every commit has a _treehash_, or, a specific identifier that represents
+the state of the file tree. Two commits that have the exact same file
+tree and thus the exact same treehash are called _treesame_.
+
+This tool allows you to create a new commit on your current branch that
+is treesame with any arbitrary commit anywhere else.
+
 ```
 usage: git-treesame-commit [-h] [-a] [-p] [-m MESSAGE] commit
 
