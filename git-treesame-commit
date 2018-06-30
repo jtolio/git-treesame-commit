@@ -1,0 +1,62 @@
+#!/usr/bin/env python2
+
+import argparse
+import subprocess
+import textwrap
+
+__copyright__ = "Copyright (C) 2108 JT Olio <jt@olio.lol>"
+
+
+def run(cmd, input=""):
+  proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+  out, _ = proc.communicate(input)
+  rv = proc.poll()
+  if rv:
+    raise subprocess.CalledProcessError(rv, cmd, out)
+  return out
+
+
+def parse_commit(commit):
+  d = {}
+  for line in commit.rstrip().split("\n"):
+    line = line.rstrip()
+    if not line:
+      return d
+    header, value = line.split(" ", 1)
+    if header in ("tree", "author", "committer"):
+      d[header] = value
+  return d
+
+
+def main():
+  parser = argparse.ArgumentParser(description="Make treesame commits")
+  parser.add_argument("commit", help="the commit to match")
+  parser.add_argument("-a", "--keep-author", action="store_true",
+                      help="if set, keep the commit's original author")
+  parser.add_argument("-m", "--message", help="the new commit message")
+  args = parser.parse_args()
+
+  newparent = run(["git", "log", "--format=%H", "-1", "HEAD"]).strip()
+  commit = parse_commit(run(["git", "cat-file", "commit", args.commit]))
+
+  newcommit = textwrap.dedent("""\
+  tree {tree}
+  parent {newparent}
+  author {author}
+  committer {committer}
+
+  Treesame commit: {tree}
+  """.format(newparent=newparent, **commit))
+
+  newhash = run(["git", "hash-object", "-t", "commit", "--stdin", "-w"],
+                newcommit).strip()
+  run(["git", "reset", "--hard", newhash])
+  amend = ["git", "commit", "--amend", "--allow-empty"]
+  if not args.keep_author:
+    amend.append("--reset-author")
+  message = args.message or ("Treesame commit: %s" % commit["tree"])
+  run(amend + ["-m", message])
+
+
+if __name__ == "__main__":
+  main()
