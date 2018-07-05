@@ -4,6 +4,12 @@ Utility to make new commits that are
 [treesame](https://git-scm.com/docs/git-log#_history_simplification)
 with others.
 
+### Warning 
+
+This program performs an unconditional `git reset --hard` which may result in destruction of staged changes, work history and unrecoverable loss of worktree changes
+
+### Description
+
 Every commit has a _treehash_, or, a specific identifier that represents
 the state of the file tree. Two commits that have the exact same file
 tree and thus the exact same treehash are called _treesame_.
