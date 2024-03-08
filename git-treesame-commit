@@ -4,7 +4,7 @@ import argparse
 import subprocess
 import textwrap
 
-__copyright__ = "Copyright (C) 2108 JT Olio <jt@olio.lol>"
+__copyright__ = "Copyright (C) 2018 JT Olio <jt@olio.lol>"
 
 
 def run(cmd, input=""):
